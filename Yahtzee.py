@@ -1,4 +1,4 @@
-#Yatzee.py
+#Yahtzee.py
 #
 #This game is Yatzee
 
