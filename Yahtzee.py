@@ -255,3 +255,7 @@ PrintScorecard()
 for s in range(13):
     markScorecard(OneTurn())
     updateScorecard()
+
+# TODO Need to add bonus Yahtzee functionality.
+# TODO Need to add option for 2nd player.
+# TODO Need to print out score comparison and winner when second player added.
