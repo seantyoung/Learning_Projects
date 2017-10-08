@@ -4,16 +4,30 @@
 
 import random
 from statistics import mode
+global status
+status = 0
 
 def Roll(): # returns a random number between 1 and 6
      return random.randint(1, 6)
 
+def Yahtzee(dice, status): # counts bonus Yahtzees scored in markScorecard
+    if dice[0] == dice[1] == dice[2] == dice[3] == dice[4]:
+        print("YAHTZEE!")
+        if status == -1:
+            print("Womp womp..")
+        else: status += 1
+    return status
+
 def FirstRoll(): # rolls first 5 dice to begin turn, returns list of 5 integers
+    global status
+
     rolled_dice = []  # place holder for dice
     for n in range(5):
         rolled_dice.append(Roll())
     rolled_dice.sort() # sorts dice in numerical order
-    print("You rolled: " + str(rolled_dice) + "\n")
+    print("You rolled: " + str(rolled_dice))
+    status = Yahtzee(rolled_dice, status)
+    print()
     return rolled_dice
 
 def RollAgain(): # determines if player wants to roll again, then asks which dice to roll again
@@ -27,25 +41,43 @@ def RollAgain(): # determines if player wants to roll again, then asks which dic
             print("\nWhich dice would you like to roll again?")
             print("(Enter the corresponding numbers separated by")
             reroll_dice = input(" spaces. 1 to 5 with 1 being the far left number)\n")
-            valid = False
+
+            # Determine if the input was the correct format and handle errors
+            valid = False # used to exit the while loop when correct format is received
             while valid == False:
-                new_dice = list(map(int, reroll_dice.split())) # converts string to integer list
-                if (new_dice[0]>=1 and new_dice[-1]<=5): #ensures replacement locations are 1 to 5
-                    valid = True
-                else: # provides additional instruction if incorrect number was entered
-                    reroll_dice = input("Enter number(s) 1 to 5 with 1 being the far left number and a space between each)\n")
+                try: # handles non number input error
+                    new_dice = list(map(int, reroll_dice.split())) # converts string to list of integers
+                except:
+                    reroll_dice = input(
+                        "Enter number(s) 1 to 5 with 1 being the far left number and a space between each)\n")
+                else: # input is numbers, now determine if they are between 1 and 5
+                    try:
+                        new_dice.sort()  # sorts dice to handle too large or small number error
+                        if (new_dice[0]>=1 and new_dice[-1]<=5): #ensures replacement locations are 1 to 5
+                            valid = True
+                        else: # provides additional instruction if incorrect number was entered
+                            reroll_dice = input(
+                                "Enter number(s) 1 to 5 with 1 being the far left number and a space between each)\n")
+                    except:
+                        reroll_dice = input(
+                            "Enter number(s) 1 to 5 with 1 being the far left number and a space between each)\n")
+
             new_dice[:] = [x - 1 for x in new_dice] # subtracts 1 from each item in list to convert to zero based list
             reroll = True
         else: print('Answer "yes" or "no"')
     return new_dice
 
-def NextRoll(original_dice, replace): # rolls and replaces dices selected in RollAgain, then resorts numerically
+def NextRoll(rolled_dice, replace): # rolls and replaces dices selected in RollAgain, then resorts numerically
+    global status
+
     print()
     for d in replace:
-        original_dice[d] = Roll()
-    original_dice.sort()
-    print("You rolled: " + str(original_dice) + "\n")
-    return original_dice
+        rolled_dice[d] = Roll()
+    rolled_dice.sort()
+    print("You rolled: " + str(rolled_dice))
+    status = Yahtzee(rolled_dice, status)
+    print()
+    return rolled_dice
 
 def OneTurn(): # one players turn, rolls dice up to 3 times
     x = FirstRoll()
@@ -112,6 +144,8 @@ r20 = [0, "   ", 0, "   ",]
 p1 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
 def markScorecard(dice):
+    global status
+
     print()
     print()
     PrintScorecard()
@@ -119,14 +153,20 @@ def markScorecard(dice):
     print("You rolled: " + str(dice))
     check = False
     while check == False:
-        row = int(input("\nWhich row are you scoring? "))
-        if (row > 0 and row < 14):
-            if p1[row - 1] == 0:
-                check = True
-                p1[row - 1] = 1
-            else: print("You already scored row %i" % row)
-        else: print("Enter a value between 1 and 13")
-    sum = 0
+        try:
+            row = int(input("\nWhich row are you scoring? "))
+        except:
+            print("Enter a number between 1 and 13, with no decimal places.")
+        else:
+            if (row > 0 and row < 14):
+                if p1[row - 1] == 0:
+                    check = True
+                    p1[row - 1] = 1
+                else: print("You already scored row %i" % row)
+            else: print("Enter a value between 1 and 13")
+
+
+    sum = 0 # Used to score various options
 
     # Scoring Selections
 
@@ -223,7 +263,10 @@ def markScorecard(dice):
     if row == 12:
         if dice[0] == dice[1] == dice[2] == dice[3] == dice[4]:
             r12[0] = 50
-        else: r12[0] = 0
+            status = 1
+        else:
+            r12[0] = 0
+            status = -1
         r12[1] = str(r12[0]).rjust(3, " ")
 
     # Select 13 - Chance
@@ -242,6 +285,18 @@ def updateScorecard():
         r17[1] = str(r17[0]).rjust(3, " ")
     r18[0] = r16[0] + r17[0]
     r18[1] = str(r18[0]).rjust(3, " ")
+    if status == 2:
+        r14[1] = " X "
+        r15[0] = 100
+        r15[1] = "100"
+    elif status == 3:
+        r14[1] = " XX"
+        r15[0] = 200
+        r15[1] = "200"
+    elif status == 4:
+        r14[1] = "XXX"
+        r15[0] = 300
+        r15[1] = "300"
     r19[0] = r7[0] + r8[0] + r9[0] + r10[0] + r11[0] + r12[0] + r13[0] + r15[0]
     r19[1] = str(r19[0]).rjust(3, " ")
     r20[0] = r18[0] + r19[0]
@@ -255,7 +310,7 @@ PrintScorecard()
 for s in range(13):
     markScorecard(OneTurn())
     updateScorecard()
+print("Game Over")
 
-# TODO Need to add bonus Yahtzee functionality.
 # TODO Need to add option for 2nd player.
 # TODO Need to print out score comparison and winner when second player added.
