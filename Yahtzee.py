@@ -33,11 +33,11 @@ def FirstRoll(): # rolls first 5 dice to begin turn, returns list of 5 integers
 def RollAgain(): # determines if player wants to roll again, then asks which dice to roll again
     reroll = 'not yet'
     while reroll == 'not yet': # ensures a correct response has been received
-        ans = input("Would you like to roll again? ").lower()
-        if ans == "no":
+        ans = input("Would you like to roll again? (y or n)").lower()
+        if ans == "n":
             reroll = False
             new_dice = ['done_rolling'] # used to bypass NextRoll
-        elif ans == "yes": # asks which dice to replace, then subtracts 1 to convert to zero based lists
+        elif ans == "y": # asks which dice to replace, then subtracts 1 to convert to zero based lists
             print("\nWhich dice would you like to roll again?")
             print("(Enter the corresponding numbers separated by")
             reroll_dice = input(" spaces. 1 to 5 with 1 being the far left number)\n")
@@ -64,7 +64,7 @@ def RollAgain(): # determines if player wants to roll again, then asks which dic
 
             new_dice[:] = [x - 1 for x in new_dice] # subtracts 1 from each item in list to convert to zero based list
             reroll = True
-        else: print('Answer "yes" or "no"')
+        else: print('Answer "y" or "n"')
     return new_dice
 
 def NextRoll(rolled_dice, replace): # rolls and replaces dices selected in RollAgain, then resorts numerically
@@ -314,3 +314,4 @@ print("Game Over")
 
 # TODO Need to add option for 2nd player.
 # TODO Need to print out score comparison and winner when second player added.
+# TODO combine roll again and next roll
