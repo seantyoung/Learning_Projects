@@ -4,3 +4,5 @@ I create basic files and store them here
 
 SQLite3
 Databases
+
+Blackjack game
