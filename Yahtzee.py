@@ -1,6 +1,6 @@
 #Yahtzee.py
 #
-#This game is Yatzee
+#This game is Yahtzee
 
 import random
 from statistics import mode
@@ -25,7 +25,7 @@ def FirstRoll(): # rolls first 5 dice to begin turn, returns list of 5 integers
     for n in range(5):
         rolled_dice.append(Roll())
     rolled_dice.sort() # sorts dice in numerical order
-    print("You rolled: " + str(rolled_dice))
+    print("\nYour first roll: " + str(rolled_dice))
     status = Yahtzee(rolled_dice, status)
     print()
     return rolled_dice
@@ -33,7 +33,7 @@ def FirstRoll(): # rolls first 5 dice to begin turn, returns list of 5 integers
 def RollAgain(): # determines if player wants to roll again, then asks which dice to roll again
     reroll = 'not yet'
     while reroll == 'not yet': # ensures a correct response has been received
-        ans = input("Would you like to roll again? (y or n)").lower()
+        ans = input("Would you like to roll again?(y or n) ").lower()
         if ans == "n":
             reroll = False
             new_dice = ['done_rolling'] # used to bypass NextRoll
@@ -67,14 +67,17 @@ def RollAgain(): # determines if player wants to roll again, then asks which dic
         else: print('Answer "y" or "n"')
     return new_dice
 
-def NextRoll(rolled_dice, replace): # rolls and replaces dices selected in RollAgain, then resorts numerically
+def NextRoll(rolled_dice, replace, roll): # rolls and replaces dices selected in RollAgain, then resorts numerically
     global status
 
     print()
     for d in replace:
         rolled_dice[d] = Roll()
     rolled_dice.sort()
-    print("You rolled: " + str(rolled_dice))
+    if roll == 2:
+        print("Your second roll: " + str(rolled_dice))
+    else:
+        print("Your thrid roll: " + str(rolled_dice))
     status = Yahtzee(rolled_dice, status)
     print()
     return rolled_dice
@@ -83,10 +86,10 @@ def OneTurn(): # one players turn, rolls dice up to 3 times
     x = FirstRoll()
     y = RollAgain()
     if y != ['done_rolling']:
-        z = NextRoll(x, y)
+        z = NextRoll(x, y, 2)
         y = RollAgain()
         if y != ['done_rolling']:
-            return NextRoll(x, y)
+            return NextRoll(x, y, 3)
         else: return z
     else: return x
 
@@ -94,7 +97,7 @@ def PrintScorecard():
     print()
     print(" --------------------------------------------------------------------")
     print("|   UPPER SECTION    HOW TO SCORE                Player 1    Player 2|")
-    print("| 1 Aces             Count and Add Only Aces       %s          %s  |" % (r1[1], r1[3]))
+    print("| 1 Ones             Count and Add Only Ones       %s          %s  |" % (r1[1], r1[3]))
     print("| 2 Twos             Count and Add Only Twos       %s          %s  |" % (r2[1], r2[3]))
     print("| 3 Threes           Count and Add Only Threes     %s          %s  |" % (r3[1], r3[3]))
     print("| 4 Fours            Count and Add Only Fours      %s          %s  |" % (r4[1], r4[3]))
@@ -105,7 +108,7 @@ def PrintScorecard():
     print("|   TOTAL of Upper Section   ---------------->     %s          %s  |" % (r18[1], r18[3]))
     print("|   LOWER SECTION    ------------------------------------------------|")
     print("| 7 3 of a kind      Add Total Of All Dice         %s          %s  |" % (r7[1], r7[3]))
-    print("| 8 4 of a king      Add Total Of All Dice         %s          %s  |" % (r8[1], r8[3]))
+    print("| 8 4 of a kind      Add Total Of All Dice         %s          %s  |" % (r8[1], r8[3]))
     print("| 9 Full House                       SCORE 25      %s          %s  |" % (r9[1], r9[3]))
     print("|10 Sm Straight (seq of 4)           SCORE 30      %s          %s  |" % (r10[1], r10[3]))
     print("|11 Lg Straight (seq of 5)           SCORE 40      %s          %s  |" % (r11[1], r11[3]))
@@ -314,4 +317,7 @@ print("Game Over")
 
 # TODO Need to add option for 2nd player.
 # TODO Need to print out score comparison and winner when second player added.
-# TODO combine roll again and next roll
+# TODO Combine RollAgain and NextRoll, think enter dice to reroll or enter 'n' to stop rolling
+
+# Changed input at roll again to 'y' and 'n' instead of 'yes' and 'no'
+# Added description of first, second, and third rolls.
