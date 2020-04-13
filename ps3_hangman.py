@@ -1,6 +1,4 @@
 # Hangman game
-#
-
 # -----------------------------------
 # Helper code
 # You don't need to understand this helper code,
