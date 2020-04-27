@@ -8,7 +8,7 @@ import bme280
 import datetime
 
 # My Spreadsheet ID ... See google documentation on how to derive this
-MY_SPREADSHEET_ID = '1tIpNwBEdbLACms2RFY-pO0...'
+MY_SPREADSHEET_ID = '1Z6Yn39ov_DBDRcpgL1iHlmNRVSS-ocxyzL3ZWM5fBbE'
 
 
 def update_sheet(sheetname, temperature, pressure, humidity):  
@@ -30,7 +30,7 @@ def update_sheet(sheetname, temperature, pressure, humidity):
     # call the append API to perform the operation
     result = service.spreadsheets().values().append(
                 spreadsheetId=MY_SPREADSHEET_ID, 
-                range=sheetname + '!A1:G1',
+                range=sheetname + 'Input!A2:G2',
                 valueInputOption='USER_ENTERED', 
                 insertDataOption='INSERT_ROWS',
                 body=body).execute()                     
@@ -45,10 +45,11 @@ def main():
     bme.set_mode(bme280.MODE_FORCED)
     tempC, pressure, humidity = bme.get_data()
     pressure = pressure/100.
-    print ('Temperature: %f °C' % tempC)
+    tempF = tempC * 9 / 5 + 32
+    print ('Temperature: %f °F' % tempF)
     print ('Pressure: %f hPa' % pressure)
     print ('Humidity: %f %%rH' % humidity)
-    update_sheet("Haifa_outside", tempC, pressure, humidity)
+    update_sheet("Input", tempF, pressure, humidity)
 
 
 if __name__ == '__main__':  
